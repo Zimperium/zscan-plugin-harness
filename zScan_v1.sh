@@ -113,6 +113,7 @@ response=$(curl -X POST \
   -F "buildFile=@${input_file}" \
   -F "buildNumber=${build_number}" \
   -F "environment=${environment}" \
+  -F "branchName=${branch_name}" \
   -F "ciToolId=${ciToolId}" \
   -F "ciToolName=${ciToolName}" \
   "${server_url}${upload_url}" 2>/dev/null)
