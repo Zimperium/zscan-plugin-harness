@@ -1,4 +1,4 @@
-name: Docker Image CI
+name: Build and Push Docker Image to JFrog
 
 on:
   push:
@@ -9,10 +9,26 @@ on:
 jobs:
 
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag zscan-plugin:$(date +%s)
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Log in to JFrog Docker registry
+        run: |
+          echo ${{ secrets.JFROG_USERNAME }} | docker login zscan-plugin-harness --username ${{ secrets.JFROG_USERNAME }} --password-stdin
+
+      - name: Build Docker image
+        run: |
+          docker build -t zscan-plugin-harness//harness-plugin/:${{ github.sha }} .
+
+      - name: Push Docker image to JFrog
+        run: |
+          docker push zscan-plugin-harness/harness-plugin/:${{ github.sha }}
+
+      - name: Logout from Docker registry
+        run: docker logout zscan-plugin-harness
