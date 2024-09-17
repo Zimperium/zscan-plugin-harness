@@ -20,15 +20,15 @@ jobs:
 
       - name: Log in to JFrog Docker registry
         run: |
-          echo ${{ secrets.JFROG_USERNAME }} | docker login zscan-plugin-harness --username ${{ secrets.JFROG_USERNAME }} --password-stdin
+          echo "${{ secrets.JFROG_GHA_USER }} ${{ secrets.JF_URL }}"
 
-      - name: Build Docker image
-        run: |
-          docker build -t zscan-plugin-harness//harness-plugin/:${{ github.sha }} .
+      # - name: Build Docker image
+      #   run: |
+      #     docker build -t zscan-plugin-harness//harness-plugin/:${{ github.sha }} .
 
-      - name: Push Docker image to JFrog
-        run: |
-          docker push zscan-plugin-harness/harness-plugin/:${{ github.sha }}
+      # - name: Push Docker image to JFrog
+      #   run: |
+      #     docker push zscan-plugin-harness/harness-plugin/:${{ github.sha }}
 
-      - name: Logout from Docker registry
-        run: docker logout zscan-plugin-harness
+      # - name: Logout from Docker registry
+      #   run: docker logout zscan-plugin-harness
