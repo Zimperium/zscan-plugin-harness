@@ -1,10 +1,8 @@
 name: Build and Push Docker Image to JFrog
 
 on:
-  push:
-    branches: [ "master" ]
   pull_request:
-    branches: [ "master" ]
+    branches: [ "develop" ]
 
 jobs:
 
@@ -24,11 +22,11 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t zimperium-zscan-plugin-harness.jfrog.io/harness-plugin:${{ github.sha }} .
+          docker build -t zimperium-zscan-plugin-harness.jfrog.io/harness-plugin/test:latest .
 
       - name: Push Docker image to JFrog
         run: |
-          docker push zimperium-zscan-plugin-harness.jfrog.io/harness-plugin:${{ github.sha }}
+          docker push zimperium-zscan-plugin-harness.jfrog.io/harness-plugin/test:latest
 
       - name: Logout from Docker registry
         run: docker logout zimperium-zscan-plugin-harness.jfrog.io

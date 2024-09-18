@@ -1,0 +1,50 @@
+name: Build and Push Docker Image to JFrog
+
+on:
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: 'Image Tag'
+        required: true
+        type: string
+  pull_request:
+    branches: [ "master" ]
+
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check if input is null or empty and set default value
+        id: check_input
+        run: |
+          if [[ -z "${{ github.event.inputs.image_tag }}" ]]; then
+            echo "Input is empty or null, setting default value."
+            echo "IMAGE_TAG=latest" >> $GITHUB_ENV
+          else
+            echo "Input is not empty, using the provided value."
+            echo "IMAGE_TAG=${{ github.event.inputs.image_tag }}" >> $GITHUB_ENV
+          fi
+
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Log in to JFrog Docker registry
+        run: |
+          docker login zimperium-zscan-plugin-harness.jfrog.io --username ${{ secrets.JFROG_ZHP_USER }} --password "${{ secrets.JFROG_ZHP_PASSWORD }}"
+
+      - name: Build Docker image
+        run: |
+          docker build -t zimperium-zscan-plugin-harness.jfrog.io/harness-plugin/prod:${{ env.IMAGE_TAG }} .
+
+      - name: Push Docker image to JFrog
+        run: |
+          docker push zimperium-zscan-plugin-harness.jfrog.io/harness-plugin/prod:${{ env.IMAGE_TAG }}
+
+      - name: Logout from Docker registry
+        run: docker logout zimperium-zscan-plugin-harness.jfrog.io
