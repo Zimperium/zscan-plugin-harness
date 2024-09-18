@@ -20,7 +20,7 @@ jobs:
 
       - name: Log in to JFrog Docker registry
         run: |
-          docker login zimperium-zscan-plugin-harness.jfrog.io --username ${{ secrets.JFROG_ZHP_USER }} --password ${{ secrets.JFROG_ZHP_USER }}
+          docker login zimperium-zscan-plugin-harness.jfrog.io --username ${{ secrets.JFROG_ZHP_USER }} --password "${{ secrets.JFROG_ZHP_PASSWORD }}"
 
       - name: Build Docker image
         run: |
