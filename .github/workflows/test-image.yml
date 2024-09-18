@@ -1,4 +1,4 @@
-name: Build and Push Docker Image to JFrog
+name: Develop - Build and Push Docker Image to JFrog
 
 on:
   pull_request:

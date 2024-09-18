@@ -1,4 +1,4 @@
-name: Build and Push Docker Image to JFrog
+name: Master - Build and Push Docker Image to JFrog
 
 on:
   workflow_dispatch:
