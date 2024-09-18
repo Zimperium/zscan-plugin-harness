@@ -24,11 +24,11 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t zimperium-zscan-plugin-harness.jfrog.io/harness-plugin/:${{ github.sha }} .
+          docker build -t zimperium-zscan-plugin-harness.jfrog.io/harness-plugin:${{ github.sha }} .
 
       - name: Push Docker image to JFrog
         run: |
-          docker push zimperium-zscan-plugin-harness.jfrog.io/harness-plugin/:${{ github.sha }}
+          docker push zimperium-zscan-plugin-harness.jfrog.io/harness-plugin:${{ github.sha }}
 
       - name: Logout from Docker registry
         run: docker logout zimperium-zscan-plugin-harness.jfrog.io
