@@ -31,10 +31,12 @@ environment=${PLUGIN_ENVIRONMENT:-}
 drone_output=${PLUGIN_DRONE_OUTPUT:-DRONE_OUTPUT.env}
 
 # internal constants
-upload_url="/api/zdev-upload/pub/v1/uploads/build"
-status_url="/api/zdev-app/pub/v1/assessments/status?buildId="
+login_url="/api/auth/v1/api_keys/login"
+upload_url="/api/zdev-upload/public/v1/uploads/build"
+status_url="/api/zdev-app/public/v1/assessments/status?buildId="
 teams_url="/api/auth/public/v1/teams"
 complete_upload_url="/api/zdev-app/public/v1/apps"
+download_assessment_url="/api/zdev-app/public/v1/assessments"
 
 AssessmentID=""
 ScanStatus="Submitted"
@@ -73,7 +75,7 @@ fi
 
 
 # Execute the curl command with the server URL
-response=$(curl --location --request POST "${server_url}/api/auth/v1/api_keys/login" \
+response=$(curl --location --request POST "${server_url}${login_url}" \
 --header 'Content-Type: application/json' \
 --data-raw "{ \"clientId\": \"$client_id\", \"secret\": \"${secret}\" }" 2>/dev/null)
 
@@ -84,7 +86,12 @@ if [[ $? -eq 0 ]]; then
 
   # Check if access token is found
   if [[ -n "$access_token" ]]; then
-    echo "Extracted access token: $access_token"
+    # If debug set, print the token.  Otherwise, print the first 10 characters.
+    if [ -n "$PLUGIN_DEBUG" ]; then
+      echo "Extracted access token: ${access_token}"
+    else
+      echo "Extracted access token: ${access_token:0:10}..."
+    fi
   else
     echo "Error: access token not found in response."
   fi
@@ -227,7 +234,7 @@ else
 fi
 
 # Send GET request with curl and capture the response
-curl -s -o "${OUTPUT_FILE}" -H "${AUTH_HEADER}" "${server_url}/api/zdev-app/pub/v1/assessments/${AssessmentID}/${report_format}"
+curl -s -o "${OUTPUT_FILE}" -H "${AUTH_HEADER}" "${server_url}${download_assessment_url}/${AssessmentID}/${report_format}"
 
 # Check for errors in the curl command
 if [ $? -ne 0 ]; then
