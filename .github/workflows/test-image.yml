@@ -22,11 +22,11 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker buildx build --platform=linux/amd64,linux/arm64 -t zimperium-zscan-plugin-harness.jfrog.io/harness-plugin/test:latest .
+          docker buildx build --platform=linux/amd64,linux/arm64 -t zimperium-zscan-plugin-harness.jfrog.io/harness-plugin/test:latest --push .
 
-      - name: Push Docker image to JFrog
-        run: |
-          docker push zimperium-zscan-plugin-harness.jfrog.io/harness-plugin/test:latest
+      #- name: Push Docker image to JFrog
+      #  run: |
+      #    docker push zimperium-zscan-plugin-harness.jfrog.io/harness-plugin/test:latest
 
       - name: Logout from Docker registry
         run: docker logout zimperium-zscan-plugin-harness.jfrog.io
