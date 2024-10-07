@@ -22,7 +22,7 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build --platform=linux/amd64,linux/arm64 -t zimperium-zscan-plugin-harness.jfrog.io/harness-plugin/test:latest .
+          docker buildx build --platform=linux/amd64,linux/arm64 -t zimperium-zscan-plugin-harness.jfrog.io/harness-plugin/test:latest .
 
       - name: Push Docker image to JFrog
         run: |
