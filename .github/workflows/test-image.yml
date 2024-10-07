@@ -1,0 +1,32 @@
+name: Develop - Build and Push Docker Image to JFrog
+
+on:
+  pull_request:
+    branches: [ "develop" ]
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Log in to JFrog Docker registry
+        run: |
+          docker login zimperium-zscan-plugin-harness.jfrog.io --username ${{ secrets.JFROG_ZHP_USER }} --password "${{ secrets.JFROG_ZHP_PASSWORD }}"
+
+      - name: Build Docker image
+        run: |
+          docker buildx build --platform=linux/amd64,linux/arm64 -t zimperium-zscan-plugin-harness.jfrog.io/harness-plugin/test:latest --push .
+
+      #- name: Push Docker image to JFrog
+      #  run: |
+      #    docker push zimperium-zscan-plugin-harness.jfrog.io/harness-plugin/test:latest
+
+      - name: Logout from Docker registry
+        run: docker logout zimperium-zscan-plugin-harness.jfrog.io
