@@ -1,4 +1,5 @@
 # zscan-plugin-harness
+
 ## Harness plugin for uploads to zScan
 
 This plugin can be used to upload mobile applications to Zimperium (zScan) to be scanned for vulnerabilities. Using a plugin simplifies integrating mobile application security testing into CI/CD process and enables detection and remediation of vulnerabilities earlier in the application SDLC.
@@ -8,18 +9,23 @@ For more information on zScan, please see [Continuous Mobile Application Securit
 ## Prerequisites
 
 1. Zimperium [MAPS](https://www.zimperium.com/mobile-app-protection/) license that includes zScan functionality.
-2. API credentials with permissions to upload binaries
-3. A valid application binary (.ipa, .apk, etc.), either built by the current pipeline or otherwise accessible by the plugin.
+2. A valid application binary (.ipa, .apk, etc.), either built by the current pipeline or otherwise accessible by the plugin.
+3. API credentials with permissions to upload binaries. In your console, head over to the Authorizations tab in the Account Management section and generate a new API key. At a minimum, the following permissions are required:
+
+- Common Section: Teams - Manage
+- zScan Section: zScan Apps - Manage, zScan Assessments - View, zScan Builds - Upload
 
 ## Parameters
+
 ### Mandatory
+
 These parameters are mandatory, unless a default value is available as described below.
 
-- **server_url**: console base URL, e.g., https://ziap.zimperium.com/
-- **client_id** and secret: API credentials that can be obtained from the console. We recommend using Harness [Text Secrets](https://developer.harness.io/docs/platform/secrets/add-use-text-secrets), as this is sensitive information that enables access to vulnerability reports
+- **server_url**: console base URL, e.g., `https://ziap.zimperium.com/`
+- **client_id** and **client_secret**: API credentials that can be obtained from the console. We recommend using Harness [Text Secrets](https://developer.harness.io/docs/platform/secrets/add-use-text-secrets), as this is sensitive information that enables access to vulnerability reports
 - **input_file**: the path to the binary relative to the current workspace
 - **team_name**: name of the team to which this application belongs.  This is required only if submitting the application for the first time; values are ignored if the application already exists in the console and assigned to a team.  If not supplied, the application will be assigned to the 'Default' team
-- **report_format**: the format of the scan report, either 'json' (default) or 'sarif'
+- **report_format**: the format of the scan report, either 'json' (default) or 'sarif'. For more information on the SARIF format, please see [OASIS Open](https://docs.oasis-open.org/sarif/sarif/v2.1.0/sarif-v2.1.0.html).
 
 ### Optional
 
@@ -27,7 +33,8 @@ These parameters are optional, but may be used to supply additional information 
 
 - **report_location**: destination folder for the vulnerability report. If not provided, the report is stored in the current workspace.
 - **report_file_name**: filename of the report. If not provided, the filename will be patterned as follows: zscan-results-AssessmentID-report_format.json, e.g., *zscan-results-123456789-sarif.json*.
-- **wait**: wait time for polling the server in seconds. 30 seconds is the default.
+- **wait_for_report**: if set to "true" (default), the script will wait for the assessment report to be complete. Otherwise, the script will exit after uploading the binary to zScan. The assessment report can be obtained through the console. Report filename and location parameters are ignored.
+- **polling_interval**: wait time for polling the server in seconds. 30 seconds is the default.
 - **branch**: source code branch that the build is based on.
 - **build_number**: application build number.
 - **environment**: target environment, e.g., uat, dev, prod.
@@ -44,7 +51,7 @@ Please refer to Harness [Drone Plugin Documentation](https://developer.harness.i
 
 This plugin is licensed under the MIT License. By using this plugin, you agree to the following terms:
 
-```
+```text
 MIT License
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
