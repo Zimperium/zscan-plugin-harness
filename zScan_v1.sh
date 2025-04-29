@@ -20,7 +20,8 @@ report_format=${PLUGIN_REPORT_FORMAT:-json}
 # Optional parameters
 report_location=${PLUGIN_REPORT_LOCATION:-.}
 report_file_name=${PLUGIN_REPORT_FILE_NAME:-}
-wait_interval=${PLUGIN_WAIT:-30}
+wait_for_report=${PLUGIN_WAIT_FOR_REPORT:-true}
+wait_interval=${PLUGIN_POLLING_INTERVAL:-30}
 branch_name=${PLUGIN_BRANCH:-}
 build_number=${PLUGIN_BUILD_NUMBER:-}
 environment=${PLUGIN_ENVIRONMENT:-}
@@ -103,17 +104,6 @@ fi
 # Construct the Authorization header with Bearer token
 AUTH_HEADER="Authorization: Bearer ${access_token}"
 
-# Upload the Binary
-# with Build Info
-# -F 'buildFile=@"/path/to/file"' \
-# -F 'buildNumber="dev-may17-1"' \
-# -F 'startedBy="pateln"' \
-# -F 'branchName="SRV-217"' \
-# -F 'environment="dev"' \
-# -F 'ciToolId="NP-Dev-TC"' \
-# -F 'ciToolName="TeamCity"' \
-# -F 'startTime="2019-05-17T01:30:00.000-05:00"'
-
 response=$(curl -X POST \
   -H "${AUTH_HEADER}" \
   -H "Content-Type: multipart/form-data" \
@@ -193,6 +183,11 @@ if [ "$teamId" == "null" ]; then
   fi  
 fi
 
+# If no need to wait for report, we're done
+if [ "$wait_for_report" != "true" ]; then
+  echo "wait_for_report is not set. We're done!"
+  exit 0
+fi
 
 # Check the Status in a loop - wait for Interval
 # TODO: add timeout
